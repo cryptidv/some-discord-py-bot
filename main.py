@@ -43,4 +43,4 @@ guild_ids=g)
 async def reddit_command(ctx, sub: str):
     await reddit(ctx, sub)
 
-client.run('ODI5NzA2Njk4NDg2NDQ4MTI5.YG8ClA.xLzt0Mpm-8KaT_oH5gMJrOVxNtY')
+client.run('TOKEN')
