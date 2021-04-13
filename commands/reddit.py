@@ -1,15 +1,20 @@
 from utils.reddit import SubReddit
 from discord.embeds import Embed
+from utils.responses import ResponseType
+from utils.discordutils import rand_color
 
 async def reddit(ctx, sub):
     post = await (await SubReddit(sub).init()).get_random_by_hot()
 
+    if not post:
+        await ctx.respond(f'The subreddit **`r/{sub}`** does not exist. Check spelling and try again.', ResponseType.WARN)
+
     if post.nsfw and not ctx.channel.nsfw:
-        await ctx.send(':x: No nsfw in a not nsfw channel tsk tsk')
+        await ctx.respond('No nsfw in a not nsfw channel, tsk tsk.', ResponseType.FORB)
         return False
 
     embed = Embed()
-    embed.color = 0x0019FF
+    embed.color = rand_color()
     embed.title = post.title
     embed.url = 'https://reddit.com' + post.link
     

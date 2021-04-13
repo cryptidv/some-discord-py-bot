@@ -1,9 +1,11 @@
 import asyncpraw
 import random
+import os
+import html
 
 reddit_client = asyncpraw.Reddit(
-    client_id="id",
-    client_secret="secret",
+    client_id=os.getenv('REDDIT_ID'),
+    client_secret=os.getenv('REDDIT_SECRET'),
     user_agent="script"
 )
 
@@ -25,7 +27,7 @@ class Submission():
         self.score = sub.score
         self.link  = sub.permalink
         self.nsfw  = sub.over_18
-        self.self_txt = sub.selftext
+        self.self_txt = html.unescape(sub.selftext)
         self.spoiler = sub.spoiler
         
         if sub.url == sub.permalink: self.url = None
@@ -46,17 +48,23 @@ class SubReddit():
         return self
 
     async def get_random_by_hot(self):
-        limit = 50
+        print(self.subreddit)
+        if not self.subreddit:
+            return None
+
+
+        limit = 100
         subrddt = self.subreddit
         subs = []
-        async for sub in subrddt.hot(limit=limit):
-            subs.append(sub)
-
+        try:
+            async for sub in subrddt.hot(limit=limit):
+                subs.append(sub)
+        except:
+            return None
         
         chosen_one = random.choice(subs)
         return Submission().format(chosen_one)
    
-        
 
     async def get_random(self, size=1):
         return Submission().format(await self.subreddit.random())
